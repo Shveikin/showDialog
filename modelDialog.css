@@ -1,0 +1,43 @@
+.black {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	background: #0004;
+	z-index: 9999999999999999;
+	overflow: auto;
+}
+
+.window {
+	width: 650px;
+	background: #fff;
+	padding: 15px;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	box-shadow: 2px 5px 13px 0px #0000006b;
+	margin: 10% auto;
+}
+
+.window textarea {
+	width: 100%;
+	min-height: 300px;
+	padding: 10px;
+	font-family: tahoma;
+	font-size: 14px;
+	resize: none;
+	box-sizing: border-box; 
+	margin-top: 4px;
+}
+
+.window .default_mess {
+	font-family: tahoma, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #444;
+}
+
+.window a {
+	padding: 10px;
+}
