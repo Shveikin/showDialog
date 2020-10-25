@@ -21,6 +21,7 @@
 	box-shadow: 2px 5px 13px 0px #0000006b;
 	margin: 10% auto;
 	border-radius: 5px;
+	overflow: hidden;
 }
 
 .window textarea {
@@ -36,7 +37,8 @@
 	border: 1px solid #ccc;
 }
 
-.window input[type="text"] {
+.window input[type="text"],
+.window input[type="password"], {
 	width: 100% !important;
 	padding: 10px;
 	font-family: tahoma;
@@ -46,6 +48,7 @@
 	margin-top: 4px;
 	border-radius: 3px;
 	border: 1px solid #ccc;
+	margin-bottom: 5px;
 }
 
 
