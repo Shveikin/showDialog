@@ -2,9 +2,7 @@
 Простое модальное окно для браузера
 
 ```js
-function myFunction () {
-   return 42;
-}
+showDialog('Hello world');
 ```
 
 
