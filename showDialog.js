@@ -1,4 +1,4 @@
-
+ 
 let old_wx0183 = null;
 function showDialog({title, message, buttons, data}){
     const main_buttons = buttons;
@@ -86,24 +86,23 @@ function showDialog({title, message, buttons, data}){
             to.innerHTML = 'Подождите...';
             message.then(itm => {
 				if (typeof itm == 'function'){
-					console.log(itm);
 					itm = itm();
 					if (itm==false)
 						return false;
 				}
 				if (itm instanceof Response)
-					return itm.text();
+					return itm.text()
 				return itm;
 			}).then(itm => {
 				if (itm)
                     to.innerHTML = insertData(itm, data)
 			});
-
-
         } else if (message instanceof HTMLElement) {
             to.appendChild(message)
+        } else if (typeof message == 'function'){
+            to.innerHTML = message()
         } else {
-            to.innerHTML = insertData(message, data);
+            to.innerHTML = insertData(message, data)
         }
     }
     
