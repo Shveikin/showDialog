@@ -34,9 +34,10 @@ showDialog({
 ```js
 showDialog({
     title: 'hi', 
-    message: '<input name="name" value="$name">',
+    message: '<input name="name" value="$name"><br><input name="name" value="$lastname">',
     data: {
-        name: "Harry"
+        name: "Harry",
+        lastname: "Potter"
     }
 })
 ```
