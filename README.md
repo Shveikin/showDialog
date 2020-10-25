@@ -2,8 +2,9 @@
 Простое модальное окно для браузера
 
 ```js
-showDialog('Hello world');
+showDialog({
+    message: 'Hello',
+});
 ```
 
-
-<img src="https://media.discordapp.net/attachments/740115357074718780/743098907667464343/unknown.png">
+<img src="https://media.discordapp.net/attachments/668839640693997578/769860938043097118/unknown.png">
