@@ -147,69 +147,67 @@ function showDialog({title, message, buttons, data}){
             for (let title of Object.keys(buttons)) {
                 let btn = document.createElement('button')
                 btn.innerHTML = title
-                // if (title)
-                //     btn.onclick = buttons[title]
-                // else 
-                // {
-                    btn.onclick = () => {
-                        const f = buttons[title].bind({
-                            right: ({message, buttons, width}) => {
-                                const htmldata = document.createElement("div")
-                                if (width){
-                                    window.style.width = (650 + width)+'px'
-                                    _formRight.style.width = width + 'px'
-                                    htmldata.style.width = width - 30 + 'px'
-                                } else 
-                                    window.style.width = '850px'
 
-                                _formRight.style.height = _form.offsetHeight + 'px'
-                                _formRight.innerHTML = '';
-                                _formRight.appendChild(htmldata)
-                                messageToFieldset(htmldata, message, false)
-                                
-                                _form.style.background = "#fcfcfc";
-                                _formRight.style.display = 'block'
-                                // _formRight.innerHTML = mess
-                                fieldset.disabled = true;
+                btn.onclick = () => {
+                    const f = buttons[title].bind({
+                        right: ({message, buttons, width}) => {
+                            
+                            const htmldata = document.createElement("div")
+                            if (width){
+                                window.style.width = (650 + width)+'px'
+                                _formRight.style.width = width + 'px'
+                                htmldata.style.width = width - 30 + 'px'
+                            } else 
+                                window.style.width = '850px'
 
-                                const closeRight = () => {
-                                    window.style.width = '650px'
-                                    _formRight.style.display = 'none'
-                                    bottomButtons.innerHTML = '';
-                                    _form.style.background = "#fff";
-                                    bottomButtons.appendChild(getButtons(main_buttons))
-                                    fieldset.disabled = false;
-                                }
+                            _formRight.style.height = _form.offsetHeight + 'px'
+                            _formRight.innerHTML = '';
+                            _formRight.appendChild(htmldata)
+                            messageToFieldset(htmldata, message, data)
+                            
+                            _form.style.background = "#fcfcfc";
+                            _formRight.style.display = 'block'
+                            // _formRight.innerHTML = mess
+                            fieldset.disabled = true;
+
+                            const closeRight = () => {
+                                window.style.width = '650px'
+                                _formRight.style.display = 'none'
                                 bottomButtons.innerHTML = '';
-
-                                const apply = () => {
-                                    const data2 = serializator(_formRight)
-                                    
-                                    data = Object.assign(data, data2)
-                                    messageToFieldset(fieldset, main_message, data)
-                                    return data2
-                                }
-
-                                if (buttons) {
-                                    const btns2 = {}
-                                    for (let i of Object.keys(buttons)){
-                                        btns2[i] = () => {
-                                            closeRight()
-                                            buttons[i](apply())
-
-                                        }
-                                    }
-                                    bottomButtons.appendChild(getButtons(btns2))
-                                } else 
-                                    bottomButtons.appendChild(getButtons({'Сохранить': () => {
-                                        closeRight()
-                                        apply()
-                                    }}))
+                                _form.style.background = "#fff"
+                                bottomButtons.appendChild(getButtons(main_buttons))
+                                fieldset.disabled = false;
                             }
-                        })
-                        f(serializator(_form))
-                    }
-                // }
+                            bottomButtons.innerHTML = '';
+
+                            const apply = () => {
+                                const data2 = serializator(_formRight)
+                                
+                                data = Object.assign(serializator(_form), data2)
+                                messageToFieldset(fieldset, main_message, data)
+                                return data2
+                            }
+
+                            if (buttons) {
+                                const btns2 = {}
+                                for (let i of Object.keys(buttons)){
+                                    btns2[i] = () => {
+                                        closeRight()
+                                        buttons[i](apply())
+
+                                    }
+                                }
+                                bottomButtons.appendChild(getButtons(btns2))
+                            } else 
+                                bottomButtons.appendChild(getButtons({'Сохранить': () => {
+                                    closeRight()
+                                    apply()
+                                }}))
+                        }
+                    })
+                    f(serializator(_form))
+                }
+
                 result.appendChild(btn)
             }
         } else {
