@@ -49,24 +49,24 @@ function showDialog({title, message, buttons, data}){
 		}
 	}
     
-    _modelDi.classList.add('black')
+    _modelDi.classList.add('black_h12nbsx9dk23m32ui4948382')
     _modelDi.onmousedown = on_mousedown
     _modelDi.onmouseup = on_mouseup
 
 
     const _form = document.createElement("form")
-    _form.classList = ['_form']
+    _form.classList = ['_form_h12nbsx9dk23m32ui4948382']
     const fieldset = document.createElement("fieldset")
     _form.appendChild(fieldset)
 
 
     const _formRight = document.createElement("form")
     _formRight.style.display = 'none'
-    _formRight.classList = ['_formRight']
+    _formRight.classList = ['_formRight_h12nbsx9dk23m32ui4948382']
 
 
     const close_panel = getButtons({ '✖': (e) => { mouseOnCloseWrapper = true; on_mouseup() } }, title)
-	close_panel.classList = ['close_panel']
+    close_panel.classList = ['close_panel_h12nbsx9dk23m32ui4948382']
     
 
     function insertData(html, data){
@@ -110,12 +110,12 @@ function showDialog({title, message, buttons, data}){
         messageToFieldset(fieldset, main_message, data)
 
     const window = document.createElement("div")
-    window.classList.add('window')
+    window.classList.add('window_h12nbsx9dk23m32ui4948382')
     window.appendChild(close_panel)
 
     
     const form_panel = document.createElement("div")
-    form_panel.classList = ['form_panel']
+    form_panel.classList = ['form_panel_h12nbsx9dk23m32ui4948382']
     form_panel.appendChild(_form)
     form_panel.appendChild(_formRight)
 
@@ -134,11 +134,11 @@ function showDialog({title, message, buttons, data}){
 
     function getButtons(buttons, title) {
         let result = document.createElement("div")
-        result.classList.add('buttons_panel')
+        result.classList.add('buttons_panel_h12nbsx9dk23m32ui4948382')
         if (title){
             const titlex = document.createElement("div")
             titlex.innerText = title
-            titlex.classList = ['dialogTitle']
+            titlex.classList = ['dialogTitle_h12nbsx9dk23m32ui4948382']
             result.appendChild(titlex)
         }
 
