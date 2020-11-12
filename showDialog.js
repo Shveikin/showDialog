@@ -1,4 +1,6 @@
  
+
+// test 22 2
 let old_wx0183 = null;
 function showDialog({title, message, buttons, data}){
     const main_buttons = buttons;
@@ -150,6 +152,9 @@ function showDialog({title, message, buttons, data}){
 
                 btn.onclick = () => {
                     const f = buttons[title].bind({
+                        close: () => {
+                            remove_black()
+                        },
                         right: ({message, buttons, width}) => {
                             
                             const htmldata = document.createElement("div")
