@@ -96,7 +96,7 @@
 	position: sticky !important;
 	bottom: 0px !important;
 	display: flex !important;
-	justify-content: flex-end;
+	justify-content: flex-end !important;
 }
 
 .dialogTitle_h12nbsx9dk23m32ui4948382 {

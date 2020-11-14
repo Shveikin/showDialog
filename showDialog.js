@@ -183,7 +183,7 @@ function showDialog({title, message, buttons, data}){
             result.appendChild(document.createElement("div"))
             result.appendChild(titlex)
         } else {
-            result.style.justifyContent = "flex-end !important"
+            result.style.justifyContent = "flex-end"
         }
 
 
