@@ -7,21 +7,26 @@
 	background: #0004 !important;
 	z-index: 9999999999999999 !important;
 	overflow: auto !important;
-	font-family: Verdana, Geneva, Tahoma, sans-serif !important;
-	font-size: 13px !important;
+	/* font-family: Verdana, Geneva, Tahoma, sans-serif !important; */
+	/* font-size: 13px !important; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px 0;
 }
 
 .window_h12nbsx9dk23m32ui4948382 {
-	width: 650px !important;
+	width: 650px;
 	background: #fff !important;
 	left: 0 !important;
 	top: 0 !important;
 	right: 0 !important;
 	bottom: 0 !important;
 	box-shadow: 2px 5px 13px 0px #0000006b !important;
-	margin: 10% auto !important;
 	border-radius: 5px !important;
 	overflow: hidden !important;
+	color: #000 !important;
+	
 }
 
 .window_h12nbsx9dk23m32ui4948382 textarea {
@@ -39,13 +44,13 @@
 
 .window_h12nbsx9dk23m32ui4948382 input[type="text"],
 .window_h12nbsx9dk23m32ui4948382 input[type="password"] {
-	width: 100% !important;
+	width: Calc(100% - 4px) !important;
 	padding: 10px !important;
 	font-family: tahoma !important;
 	font-size: 14px !important;
 	resize: none !important;
 	box-sizing: border-box !important; 
-	margin-top: 4px !important;
+	margin: 4px 0 !important;
 	border-radius: 3px !important;
 	border: 1px solid #ccc !important;
 	margin-bottom: 5px !important;
@@ -56,12 +61,14 @@
 .window_h12nbsx9dk23m32ui4948382  .btnx {
     display: inline-block !important;
     padding: 4px 11px !important;
-    background: #eee !important;
+    background: #fff !important;
     margin: 5px 0 !important;
     border: 1px solid #ccc !important;
     border-radius: 3px !important;
 	cursor: pointer !important;
 	margin-right: 5px !important;
+	font-size: 15px !important;
+	box-shadow: none;
 }
 
 .window_h12nbsx9dk23m32ui4948382 .default_mess {
@@ -74,6 +81,14 @@
 	padding: 10px !important;
 }
 
+.close_panel_h12nbsx9dk23m32ui4948382 button {
+	box-shadow: none;
+}
+
+.close_panel_h12nbsx9dk23m32ui4948382 button:hover {
+	
+}
+
 .buttons_panel_h12nbsx9dk23m32ui4948382 {
 	padding: 10px !important;
     background: #eee !important;
@@ -81,7 +96,7 @@
 	position: sticky !important;
 	bottom: 0px !important;
 	display: flex !important;
-	justify-content: flex-end !important;
+	justify-content: flex-end;
 }
 
 .dialogTitle_h12nbsx9dk23m32ui4948382 {

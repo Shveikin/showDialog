@@ -3,6 +3,8 @@
 // test 22 2
 let old_wx0183 = null;
 function showDialog({title, message, buttons, data}){
+    document.body.style.overflow = 'hidden'
+
     const main_buttons = buttons;
     const main_message = message;
     function serializator(_frm) {
@@ -37,7 +39,13 @@ function showDialog({title, message, buttons, data}){
     
     const _modelDi = document.createElement("div")
     let mouseOnCloseWrapper = false
-    const remove_black = () => { if (old_wx0183) old_wx0183.parentNode.removeChild(old_wx0183); old_wx0183 = null}
+    const remove_black = () => { 
+        if (old_wx0183) {
+            old_wx0183.parentNode.removeChild(old_wx0183); 
+            old_wx0183 = null
+            document.body.style.overflow = 'auto'
+        }
+    }
     remove_black()
     old_wx0183 = _modelDi
     const on_mousedown = function (e) {
@@ -67,14 +75,13 @@ function showDialog({title, message, buttons, data}){
     _formRight.classList = ['_formRight_h12nbsx9dk23m32ui4948382']
 
 
-    const close_panel = getButtons({ '✖': (e) => { mouseOnCloseWrapper = true; on_mouseup() } }, title)
+    const close_panel = getButtons({ '✖': (e) => { mouseOnCloseWrapper = true; on_mouseup() } }, title, false)
     close_panel.classList = ['close_panel_h12nbsx9dk23m32ui4948382']
     
 
     function insertData(html, data){
 		if (data){
 			for (let i of Object.keys(data)){
-                // html = replaceAll2(html, '$'+i, data[i]);
                 html = html.split('$' + i).join(data[i])
 			}
 		}
@@ -84,11 +91,34 @@ function showDialog({title, message, buttons, data}){
 
     function messageToFieldset(to, message, data){
         // const to = to_right ? _formRight : fieldset;
-        if (message instanceof Promise){
+
+        if (data instanceof Promise){
+            to.innerHTML = 'Подождите...';
+            data.then(itm => {
+                if (typeof itm == 'function') {
+                    itm = itm();
+                    if (itm == false)
+                        return false;
+                }
+                if (itm instanceof Response)
+                    return itm.text()
+                return itm;
+            }).then(itm => {
+                if (itm){
+                    if (typeof message == 'function'){
+                        to.innerHTML = insertData(message(itm), itm)
+                    } else {
+                        to.innerHTML = insertData(itm, data)
+                    }
+                }
+                    
+            });
+
+        } else if (message instanceof Promise){
             to.innerHTML = 'Подождите...';
             message.then(itm => {
 				if (typeof itm == 'function'){
-					itm = itm();
+                    itm = itm(data);
 					if (itm==false)
 						return false;
 				}
@@ -96,15 +126,24 @@ function showDialog({title, message, buttons, data}){
 					return itm.text()
 				return itm;
 			}).then(itm => {
-				if (itm)
-                    to.innerHTML = insertData(itm, data)
+                if (itm)
+                    if (typeof data == 'function')
+                        to.innerHTML = insertData(itm, data())
+                    else
+                        to.innerHTML = insertData(itm, data)
 			});
         } else if (message instanceof HTMLElement) {
             to.appendChild(message)
         } else if (typeof message == 'function'){
-            to.innerHTML = message()
+            if (typeof data == 'function')
+                to.innerHTML = insertData(message(data()), data())
+            else
+                to.innerHTML = insertData(message(data), data)
         } else {
-            to.innerHTML = insertData(message, data)
+            if (typeof data == 'function')
+                to.innerHTML = insertData(message, data())
+            else
+                to.innerHTML = insertData(message, data)
         }
     }
     
@@ -134,14 +173,17 @@ function showDialog({title, message, buttons, data}){
 
 
 
-    function getButtons(buttons, title) {
+    function getButtons(buttons, title, report = true) {
         let result = document.createElement("div")
         result.classList.add('buttons_panel_h12nbsx9dk23m32ui4948382')
         if (title){
             const titlex = document.createElement("div")
             titlex.innerText = title
             titlex.classList = ['dialogTitle_h12nbsx9dk23m32ui4948382']
+            result.appendChild(document.createElement("div"))
             result.appendChild(titlex)
+        } else {
+            result.style.justifyContent = "flex-end !important"
         }
 
 
@@ -151,6 +193,10 @@ function showDialog({title, message, buttons, data}){
                 btn.innerHTML = title
 
                 btn.onclick = () => {
+                    if (report)
+                        if (!_form.reportValidity()) return false;
+
+
                     const f = buttons[title].bind({
                         close: () => {
                             remove_black()
@@ -199,7 +245,6 @@ function showDialog({title, message, buttons, data}){
                                     btns2[i] = () => {
                                         closeRight()
                                         buttons[i](apply())
-
                                     }
                                 }
                                 bottomButtons.appendChild(getButtons(btns2))
