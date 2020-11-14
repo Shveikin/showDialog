@@ -2,7 +2,7 @@
 
 // test 22 2
 let old_wx0183 = null;
-function showDialog({title, message, buttons, data}){
+function showDialog({title, message, buttons, data, style}){
     document.body.style.overflow = 'hidden'
 
     const main_buttons = buttons;
@@ -153,6 +153,11 @@ function showDialog({title, message, buttons, data}){
     const window = document.createElement("div")
     window.classList.add('window_h12nbsx9dk23m32ui4948382')
     window.appendChild(close_panel)
+    if (style){
+        if (style.color) window.style.color = style.color
+        if (style.background) window.style.background = style.background
+    }
+
 
     
     const form_panel = document.createElement("div")
