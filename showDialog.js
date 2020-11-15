@@ -3,7 +3,7 @@
 // test 22 2
 let old_wx0183 = null;
 function showDialog({title, message, buttons, data, style}){
-    document.body.style.overflow = 'hidden'
+    
 
     const main_buttons = buttons;
     const main_message = message;
@@ -47,6 +47,7 @@ function showDialog({title, message, buttons, data, style}){
         }
     }
     remove_black()
+    document.body.style.overflow = 'hidden'
     old_wx0183 = _modelDi
     const on_mousedown = function (e) {
         if (e.target == this && window.outerWidth - e.clientX > 50)
