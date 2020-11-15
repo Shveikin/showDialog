@@ -67,6 +67,10 @@ function showDialog({title, message, buttons, data, style}){
 
     const _form = document.createElement("form")
     _form.classList = ['_form_h12nbsx9dk23m32ui4948382']
+    if (style)
+        if (style.padding)
+            _form.style.padding = style.padding
+    
     const fieldset = document.createElement("fieldset")
     _form.appendChild(fieldset)
 
@@ -208,7 +212,7 @@ function showDialog({title, message, buttons, data, style}){
                             remove_black()
                         },
                         right: ({message, buttons, width}) => {
-                            
+                            width = parseInt(width) 
                             const htmldata = document.createElement("div")
                             if (width){
                                 window.style.width = (650 + width)+'px'
