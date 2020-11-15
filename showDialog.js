@@ -236,6 +236,7 @@ function showDialog({title, message, buttons, data, style}){
                             bottomButtons.innerHTML = '';
 
                             const apply = () => {
+                                
                                 const data2 = serializator(_formRight)
                                 
                                 data = Object.assign(serializator(_form), data2)
@@ -247,15 +248,17 @@ function showDialog({title, message, buttons, data, style}){
                                 const btns2 = {}
                                 for (let i of Object.keys(buttons)){
                                     btns2[i] = () => {
-                                        closeRight()
+                                        if (!_formRight.reportValidity()) return false;
                                         buttons[i](apply())
+                                        closeRight()
                                     }
                                 }
                                 bottomButtons.appendChild(getButtons(btns2))
                             } else 
                                 bottomButtons.appendChild(getButtons({'Сохранить': () => {
-                                    closeRight()
+                                    if (!_formRight.reportValidity()) return false;
                                     apply()
+                                    closeRight()
                                 }}))
                         }
                     })
