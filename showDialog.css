@@ -137,6 +137,7 @@
 	border-left: 1px solid #0003 !important;
 	padding: 10px !important;
 	overflow: auto !important;
+	border-radius: 0;
 }
 
 ._formRight_h12nbsx9dk23m32ui4948382::-webkit-scrollbar-track {

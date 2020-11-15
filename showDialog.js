@@ -222,7 +222,6 @@ function showDialog({title, message, buttons, data, style}){
                             _formRight.appendChild(htmldata)
                             messageToFieldset(htmldata, message, data)
                             
-                            _form.style.background = "#fcfcfc";
                             _formRight.style.display = 'block'
                             // _formRight.innerHTML = mess
                             fieldset.disabled = true;
@@ -231,7 +230,6 @@ function showDialog({title, message, buttons, data, style}){
                                 window.style.width = '650px'
                                 _formRight.style.display = 'none'
                                 bottomButtons.innerHTML = '';
-                                _form.style.background = "#fff"
                                 bottomButtons.appendChild(getButtons(main_buttons))
                                 fieldset.disabled = false;
                             }
