@@ -9,10 +9,10 @@
 	overflow: auto !important;
 	/* font-family: Verdana, Geneva, Tahoma, sans-serif !important; */
 	/* font-size: 13px !important; */
-	display: flex;
+	/* display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px 0;
+	padding: 20px 0; */
 }
 
 .window_h12nbsx9dk23m32ui4948382 {
@@ -26,6 +26,8 @@
 	border-radius: 5px !important;
 	overflow: hidden !important;
 	color: #000;
+
+	margin: 10% auto;
 }
 
 .window_h12nbsx9dk23m32ui4948382 textarea {
@@ -152,7 +154,7 @@
     background: #ffffff30;
     align-items: center !important;
     justify-content: space-between !important;
-	
+	flex-direction: row-reverse;
 	color: inherit;
 }
 
