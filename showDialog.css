@@ -7,6 +7,7 @@
 	background: #0004 !important;
 	z-index: 9999999999999999 !important;
 	overflow: auto !important;
+	padding: 10px;
 	/* font-family: Verdana, Geneva, Tahoma, sans-serif !important; */
 	/* font-size: 13px !important; */
 	/* display: flex;
@@ -27,7 +28,7 @@
 	overflow: hidden !important;
 	color: #000;
 
-	margin: 10% 10px;
+	margin: 10% auto;
 }
 
 .window_h12nbsx9dk23m32ui4948382 textarea {
