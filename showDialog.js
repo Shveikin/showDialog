@@ -186,11 +186,14 @@ function showDialog({title, message, buttons, data, style}){
     function getButtons(buttons, title, report = true) {
         let result = document.createElement("div")
         result.classList.add('buttons_panel_h12nbsx9dk23m32ui4948382')
+        result.appendChild(document.createElement("div"))
+
+        
         if (title){
             const titlex = document.createElement("div")
             titlex.innerText = title
             titlex.classList = ['dialogTitle_h12nbsx9dk23m32ui4948382']
-            result.appendChild(document.createElement("div"))
+            
             result.appendChild(titlex)
         } else {
             result.style.justifyContent = "flex-end"
@@ -215,11 +218,11 @@ function showDialog({title, message, buttons, data, style}){
                             width = parseInt(width) 
                             const htmldata = document.createElement("div")
                             if (width){
-                                window.style.width = (650 + width)+'px'
+                                window.style.maxWidth = (650 + width)+'px'
                                 _formRight.style.width = width + 'px'
                                 htmldata.style.width = width - 30 + 'px'
                             } else 
-                                window.style.width = '850px'
+                                window.style.maxWidth = '850px'
 
                             _formRight.style.height = _form.offsetHeight + 'px'
                             _formRight.innerHTML = '';
@@ -231,7 +234,7 @@ function showDialog({title, message, buttons, data, style}){
                             fieldset.disabled = true;
 
                             const closeRight = () => {
-                                window.style.width = '650px'
+                                window.style.maxWidth = '650px'
                                 _formRight.style.display = 'none'
                                 bottomButtons.innerHTML = '';
                                 bottomButtons.appendChild(getButtons(main_buttons))

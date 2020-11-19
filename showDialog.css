@@ -16,7 +16,7 @@
 }
 
 .window_h12nbsx9dk23m32ui4948382 {
-	width: 650px;
+	max-width: 650px;
 	background: #fff;
 	left: 0 !important;
 	top: 0 !important;
@@ -27,7 +27,7 @@
 	overflow: hidden !important;
 	color: #000;
 
-	margin: 10% auto;
+	margin: 10% 10px;
 }
 
 .window_h12nbsx9dk23m32ui4948382 textarea {
@@ -154,7 +154,6 @@
     background: #ffffff30;
     align-items: center !important;
     justify-content: space-between !important;
-	flex-direction: row-reverse;
 	color: inherit;
 }
 
