@@ -7,6 +7,7 @@
 	background: #0004 !important;
 	z-index: 9999999999999999 !important;
 	overflow: auto !important;
+	padding: 10px;
 	/* font-family: Verdana, Geneva, Tahoma, sans-serif !important; */
 	/* font-size: 13px !important; */
 	/* display: flex;
@@ -16,7 +17,7 @@
 }
 
 .window_h12nbsx9dk23m32ui4948382 {
-	width: 650px;
+	max-width: 650px;
 	background: #fff;
 	left: 0 !important;
 	top: 0 !important;
@@ -154,7 +155,6 @@
     background: #ffffff30;
     align-items: center !important;
     justify-content: space-between !important;
-	flex-direction: row-reverse;
 	color: inherit;
 }
 
