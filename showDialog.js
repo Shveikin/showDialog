@@ -2,7 +2,7 @@
 
 // test 22 2
 let old_wx0183 = null;
-function showDialog({title, message, buttons, data, style}){
+function showDialog({title, message, buttons, data, style, methods}){
     
 
     const main_buttons = buttons;
@@ -35,7 +35,7 @@ function showDialog({title, message, buttons, data, style}){
     }
 
 
-    
+
     
     const _modelDi = document.createElement("div")
     let mouseOnCloseWrapper = false
@@ -51,7 +51,7 @@ function showDialog({title, message, buttons, data, style}){
     old_wx0183 = _modelDi
     const on_mousedown = function (e) {
         if (e.target == this && window.outerWidth - e.clientX > 50)
-        mouseOnCloseWrapper = true
+            mouseOnCloseWrapper = true
 	}
 	const on_mouseup = function () {
         if (mouseOnCloseWrapper) {
@@ -76,6 +76,7 @@ function showDialog({title, message, buttons, data, style}){
 
 
     const _formRight = document.createElement("form")
+    _formRight.onsubmit = (e) => e.preventDefault()
     _formRight.style.display = 'none'
     _formRight.classList = ['_formRight_h12nbsx9dk23m32ui4948382']
 
@@ -84,6 +85,70 @@ function showDialog({title, message, buttons, data, style}){
     close_panel.classList = ['close_panel_h12nbsx9dk23m32ui4948382']
     
 
+    const _bind = {
+        data: data,
+        close: () => {
+            remove_black()
+        },
+        right: ({ message, buttons, width }) => {
+            width = parseInt(width)
+            const htmldata = document.createElement("div")
+            if (width) {
+                window.style.maxWidth = (650 + width) + 'px'
+                _formRight.style.width = width + 'px'
+                htmldata.style.width = width - 30 + 'px'
+            } else 
+                window.style.maxWidth = '850px'
+
+            _formRight.style.height = _form.offsetHeight + 'px'
+            _formRight.innerHTML = '';
+            _formRight.appendChild(htmldata)
+            messageToFieldset(htmldata, message, data)
+
+            _formRight.style.display = 'block'
+            // _formRight.innerHTML = mess
+            fieldset.disabled = true;
+
+            const closeRight = () => {
+                window.style.maxWidth = '650px'
+                _formRight.style.display = 'none'
+                bottomButtons.innerHTML = '';
+                bottomButtons.appendChild(getButtons(main_buttons))
+                fieldset.disabled = false;
+            }
+            bottomButtons.innerHTML = '';
+
+            const apply = () => {
+
+                const data2 = serializator(_formRight)
+
+                data = Object.assign(serializator(_form), data2)
+                messageToFieldset(fieldset, main_message, data)
+                return data2
+            }
+
+            if (buttons) {
+                const btns2 = {}
+                for (let i of Object.keys(buttons)) {
+                    btns2[i] = () => {
+                        if (!_formRight.reportValidity()) return false;
+                        buttons[i](apply())
+                        closeRight()
+                    }
+                }
+                bottomButtons.appendChild(getButtons(btns2))
+            } else
+                bottomButtons.appendChild(getButtons({
+                    'Сохранить': () => {
+                        if (!_formRight.reportValidity()) return false;
+                        apply()
+                        closeRight()
+                    }
+                })
+            )
+        }
+    };
+
     function insertData(html, data){
 		if (data){
 			for (let i of Object.keys(data)){
@@ -91,7 +156,34 @@ function showDialog({title, message, buttons, data, style}){
 			}
 		}
 		return html;
-	}
+    }
+    
+    function appy_methods() {
+        if (methods)
+            setTimeout(() => {
+                for (let method of Object.keys(methods)) {
+                    const qs = `.${window.classList.toString().replace(' ', ' .')} button[onclick*="${method}"]`;
+
+                    const buttons_list = document.querySelectorAll(qs);
+                    for (let i = 0; i< buttons_list.length; i++){
+                        const f = methods[method].bind(_bind)
+
+                        const mtd = function(e){
+                            e.preventDefault();
+                            let cdata = buttons_list[i].getAttribute('onclick').substr(method.length);
+                            eval('f' + cdata)
+                        }.bind(_bind);
+
+                        buttons_list[i].onclick = mtd;
+                    }
+                }
+            }, 100);
+    }
+
+    function toHtml(to, data){
+        to.innerHTML = data
+        appy_methods()
+    }
 
 
     function messageToFieldset(to, message, data){
@@ -110,13 +202,13 @@ function showDialog({title, message, buttons, data, style}){
                 return itm;
             }).then(itm => {
                 if (itm){
+                    _bind['fetchData'] = itm;
                     if (typeof message == 'function'){
-                        to.innerHTML = insertData(message(itm), itm)
+                        toHtml(to, insertData(message(itm), itm))
                     } else {
-                        to.innerHTML = insertData(itm, data)
+                        toHtml(to, insertData(itm, data));
                     }
                 }
-                    
             });
 
         } else if (message instanceof Promise){
@@ -133,23 +225,24 @@ function showDialog({title, message, buttons, data, style}){
 			}).then(itm => {
                 if (itm)
                     if (typeof data == 'function')
-                        to.innerHTML = insertData(itm, data())
+                        toHtml(to, insertData(itm, data()))
                     else
-                        to.innerHTML = insertData(itm, data)
+                        toHtml(to, insertData(itm, data))
 			});
         } else if (message instanceof HTMLElement) {
             to.appendChild(message)
         } else if (typeof message == 'function'){
             if (typeof data == 'function')
-                to.innerHTML = insertData(message(data()), data())
+                toHtml(to, insertData(message(data()), data()))
             else
-                to.innerHTML = insertData(message(data), data)
+                toHtml(to, insertData(message(data), data))
         } else {
             if (typeof data == 'function')
-                to.innerHTML = insertData(message, data())
+                toHtml(to, insertData(message, data()))
             else
-                to.innerHTML = insertData(message, data)
+                toHtml(to, insertData(message, data))
         }
+
     }
     
     if (main_message)
@@ -210,65 +303,7 @@ function showDialog({title, message, buttons, data, style}){
                         if (!_form.reportValidity()) return false;
 
 
-                    const f = buttons[title].bind({
-                        close: () => {
-                            remove_black()
-                        },
-                        right: ({message, buttons, width}) => {
-                            width = parseInt(width) 
-                            const htmldata = document.createElement("div")
-                            if (width){
-                                window.style.maxWidth = (650 + width)+'px'
-                                _formRight.style.width = width + 'px'
-                                htmldata.style.width = width - 30 + 'px'
-                            } else 
-                                window.style.maxWidth = '850px'
-
-                            _formRight.style.height = _form.offsetHeight + 'px'
-                            _formRight.innerHTML = '';
-                            _formRight.appendChild(htmldata)
-                            messageToFieldset(htmldata, message, data)
-                            
-                            _formRight.style.display = 'block'
-                            // _formRight.innerHTML = mess
-                            fieldset.disabled = true;
-
-                            const closeRight = () => {
-                                window.style.maxWidth = '650px'
-                                _formRight.style.display = 'none'
-                                bottomButtons.innerHTML = '';
-                                bottomButtons.appendChild(getButtons(main_buttons))
-                                fieldset.disabled = false;
-                            }
-                            bottomButtons.innerHTML = '';
-
-                            const apply = () => {
-                                
-                                const data2 = serializator(_formRight)
-                                
-                                data = Object.assign(serializator(_form), data2)
-                                messageToFieldset(fieldset, main_message, data)
-                                return data2
-                            }
-
-                            if (buttons) {
-                                const btns2 = {}
-                                for (let i of Object.keys(buttons)){
-                                    btns2[i] = () => {
-                                        if (!_formRight.reportValidity()) return false;
-                                        buttons[i](apply())
-                                        closeRight()
-                                    }
-                                }
-                                bottomButtons.appendChild(getButtons(btns2))
-                            } else 
-                                bottomButtons.appendChild(getButtons({'Сохранить': () => {
-                                    if (!_formRight.reportValidity()) return false;
-                                    apply()
-                                    closeRight()
-                                }}))
-                        }
-                    })
+                    const f = buttons[title].bind(_bind)
                     f(serializator(_form))
                 }
 
@@ -279,8 +314,12 @@ function showDialog({title, message, buttons, data, style}){
         }
         return result
     }
+
+
+
     
 
-
     document.body.appendChild(_modelDi)
+
+
 }
