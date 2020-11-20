@@ -1,7 +1,9 @@
- 
 
-// test 22 2
+
+
+
 let old_wx0183 = null;
+const hahc_xauto_scrollx42ex = {}
 function showDialog({title, message, buttons, data, style, methods}){
     
 
@@ -272,6 +274,11 @@ function showDialog({title, message, buttons, data, style, methods}){
 
     window.appendChild(bottomButtons)
     _modelDi.appendChild(window)
+
+    _modelDi.onscroll = function(e){
+        hahc_xauto_scrollx42ex[title] = _modelDi.scrollTop
+    }
+    
     
 
 
@@ -317,9 +324,12 @@ function showDialog({title, message, buttons, data, style, methods}){
 
 
 
-    
+
 
     document.body.appendChild(_modelDi)
+    
+    if (title in hahc_xauto_scrollx42ex)
+        _modelDi.scrollTop = hahc_xauto_scrollx42ex[title]
 
 
 }
