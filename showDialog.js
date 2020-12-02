@@ -4,7 +4,7 @@
 
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
-function showDialog({title, message, buttons, data, style, methods}){
+function showDialog({ title, message, buttons, data, style, methods, form_request}){
     
 
     const main_buttons = buttons;
@@ -76,6 +76,16 @@ function showDialog({title, message, buttons, data, style, methods}){
     const fieldset = document.createElement("fieldset")
     _form.appendChild(fieldset)
 
+    if (form_request){
+        if ('method' in form_request)
+            _form.method = form_request['method'];
+
+        if ('action' in form_request)
+            _form.action = form_request['action'];
+    }
+        
+        
+
 
     const _formRight = document.createElement("form")
     _formRight.onsubmit = (e) => e.preventDefault()
@@ -88,6 +98,9 @@ function showDialog({title, message, buttons, data, style, methods}){
     
 
     const _bind = {
+        form: () => {
+            return serializator(_form)
+        },
         data: data,
         close: () => {
             remove_black()
@@ -168,6 +181,7 @@ function showDialog({title, message, buttons, data, style, methods}){
 
                     const buttons_list = document.querySelectorAll(qs);
                     for (let i = 0; i< buttons_list.length; i++){
+                        
                         const f = methods[method].bind(_bind)
 
                         const mtd = function(e){
