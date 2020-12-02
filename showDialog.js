@@ -92,6 +92,21 @@ function showDialog({title, message, buttons, data, style, methods}){
         close: () => {
             remove_black()
         },
+        serializeData:() => {
+            const formData = Object.assign(data, serializator(_form));
+            const descript = {}
+
+            for (const i of Object.keys(formData)){
+                Object.defineProperty(descript, i, {
+                    get: () => Object.assign(data, serializator(_form))[i],
+                    set: (x) => {
+                        messageToFieldset(fieldset, main_message, Object.assign(Object.assign(data, serializator(_form)), { [i]: x}))
+                    }
+                });
+            }
+
+            return descript;
+        },
         right: ({ message, buttons, width }) => {
             width = parseInt(width)
             const htmldata = document.createElement("div")
