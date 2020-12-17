@@ -105,7 +105,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
         close: () => {
             remove_black()
         },
-        right: ({ message, buttons, width }) => {
+        right: ({ message, buttons, width, dataRight}) => {
             width = parseInt(width)
             const htmldata = document.createElement("div")
             if (width) {
@@ -118,7 +118,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             _formRight.style.height = _form.offsetHeight + 'px'
             _formRight.innerHTML = '';
             _formRight.appendChild(htmldata)
-            messageToFieldset(htmldata, message, data)
+            messageToFieldset(htmldata, message, dataRight)
 
             _formRight.style.display = 'block'
             // _formRight.innerHTML = mess
