@@ -1,6 +1,9 @@
 # showDialog
 Простое модальное окно для браузера
 
+Все примеры здесь
+https://codepen.io/picus23/pen/mdOpbdE
+
 ```js
 showDialog({
     message: 'Hello',
