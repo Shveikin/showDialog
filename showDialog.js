@@ -44,6 +44,8 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             } catch (err) { console.log('showDialog', err) }
             old_wx0183 = null
             document.body.style.overflow = 'auto'
+            if (methods && 'onclose' in methods && typeof methods['onclose'] == 'function')
+                methods['onclose']();
         }
     }
     remove_black()
