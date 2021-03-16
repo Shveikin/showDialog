@@ -199,7 +199,8 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             }
 
             return descript;
-        }
+        },
+        methods
     }
 
 
