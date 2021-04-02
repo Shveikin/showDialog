@@ -295,82 +295,13 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             return false;
         } else if (message instanceof HTMLElement) {
             // console.log('message HTMLElement', message, data);
+            to.innerHTML = '';
             to.appendChild(message)
         } else {
             // console.log('message else', message, data);
             toHtml(to, insertData(message, data))
         }
-
-
-        // console.log('_bind', _bind)
     }
-
-
-
-
-
-
-
-    // function messageToFieldset2(to, message, data) {
-    //     // const to = to_right ? _formRight : fieldset;
-
-    //     if (data instanceof Promise) {
-    //         to.innerHTML = '<div class="load">Подождите...</div>';
-    //         data.then(itm => {
-    //             if (typeof itm == 'function') {
-    //                 itm = itm();
-    //                 if (itm == false)
-    //                     return false;
-    //             }
-    //             if (itm instanceof Response)
-    //                 return itm.text()
-    //             return itm;
-    //         }).then(itm => {
-    //             if (itm) {
-    //                 _bind['fetchData'] = itm;
-    //                 if (typeof message == 'function') {
-    //                     toHtml(to, insertData(message(itm), itm))
-    //                 } else {
-    //                     toHtml(to, insertData(itm, data));
-    //                 }
-    //             }
-    //         });
-
-    //     } else if (message instanceof Promise) {
-    //         to.innerHTML = '<div class="load">Подождите...</div>';
-    //         message.then(itm => {
-    //             if (typeof itm == 'function') {
-    //                 itm = itm(data);
-    //                 if (itm == false)
-    //                     return false;
-    //             }
-    //             if (itm instanceof Response)
-    //                 return itm.text()
-    //             return itm;
-    //         }).then(itm => {
-    //             if (itm)
-    //                 if (typeof data == 'function')
-    //                     toHtml(to, insertData(itm, data()))
-    //                 else
-    //                     toHtml(to, insertData(itm, data))
-    //         });
-    //     } else if (message instanceof HTMLElement) {
-    //         to.appendChild(message)
-    //     } else if (typeof message == 'function') {
-    //         if (typeof data == 'function')
-    //             // toHtml(to, insertData(message(data()), data()))
-    //             messageToFieldset(to, message(data()), data())
-    //         else
-    //             messageToFieldset(to, message(data), data)
-    //             // toHtml(to, insertData(message(data), data))
-    //     } else {
-    //         if (typeof data == 'function')
-    //             messageToFieldset(to, message, data())
-    //         else
-    //             toHtml(to, insertData(message, data))
-    //     }
-
-    // }
 
     if (main_message)
         messageToFieldset(fieldset, main_message, main_data)
