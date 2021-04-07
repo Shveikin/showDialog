@@ -1,4 +1,4 @@
-// У message нет THIS!
+// У message есть THIS!
 
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
@@ -290,6 +290,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             return false;
         } else if (typeof message == 'function') {
             // console.log('message function', message, data);
+            message = message.bind(_bind)
             _bind['functionMessage'] = message;
             messageToFieldset(to, message(data), data)
             return false;
