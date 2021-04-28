@@ -3,6 +3,13 @@
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
 function showDialog({ title, message, buttons, data, style, methods, form_request }) {
+    function createElement(tag, params = false){
+        const element = document.createElement(tag);
+        if (params) for (let i of Object.keys(params)) 
+        if (i=='style') for (let j of Object.keys(params[i]))  element.style[j] = params[i][j]
+        else element[i] = params[i];
+        return element;
+    }
 
     const main_buttons = buttons;
     const main_message = message;
@@ -11,7 +18,6 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
         let array = Array.from(new FormData(_frm));
         let result = {};
         for (let i in array) {
-
 
             let name = array[i][0];
             let value = array[i][1];
@@ -397,6 +403,5 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
     if (title in hahc_xauto_scrollx42ex)
         _modelDi.scrollTop = hahc_xauto_scrollx42ex[title]
-
 
 }
