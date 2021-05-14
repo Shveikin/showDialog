@@ -2,7 +2,89 @@
 
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
-function showDialog({ title, message, buttons, data, style, methods, form_request }) {
+function showDialog({ title, message, buttons, data, style, methods, form_request, nav}) {
+    function createElement(tag, params = false){
+		const element = document.createElement(tag)
+		if (params) 
+        for (let i of Object.keys(params)) { 
+            if (i=='style') for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
+            else if (i=='hover') {
+                console.log('hover');
+                let hoverstyle = '';
+                for (let j of Object.keys(params[i])) {
+                    hoverstyle += `${j}: ${params[i][j]};`
+                }
+                const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
+                element.id = xid
+
+                hoverstyle = `#${xid}:hover {${hoverstyle}}`
+                console.log('hh>>', hoverstyle);
+
+                const styleElement = document.createElement('style')
+                if (styleElement.styleSheet) {
+                    styleElement.styleSheet.cssText = hoverstyle;
+                } else {
+                    styleElement.appendChild(document.createTextNode(hoverstyle));
+                }
+                document.getElementsByTagName('head')[0].appendChild(styleElement)
+            } else element[i] = params[i];
+        } 
+		return element;
+	}
+
+    let navPath = ''
+    let navigator = null
+    if (nav) {
+        navigator = createElement('div', {
+            style: {
+                borderRight: '1px solid #ccc',
+                minWidth: '150px'
+            }
+        })
+
+
+        function renderMenu(elements){
+            const ul = createElement('ul', {
+                style: {
+                    margin: 0,
+                    padding: 0
+                }
+            })
+
+
+            let keys = []
+            if (Array.isArray(elements)){
+                keys = elements.map(x => x['title'])
+            } else {
+                
+            }
+
+
+            for(const i of Object.keys(elements)){
+                console.log('>>>', i);
+                const li = createElement('ul', {
+                    innerHTML: i,
+                    style: {
+                        margin: 0,
+                        padding: '2px 5px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        transition: 'all .3s'
+                    }, 
+                    hover: {
+                        background: '#ccc',
+                        color: '#fff'
+                    }
+                })
+                ul.appendChild(li)
+            }
+            return ul
+        }
+        navigator.appendChild(renderMenu(nav))
+    }
+
+    console.log(navigator)
+
 
     const main_buttons = buttons;
     const main_message = message;
@@ -80,6 +162,9 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
 
     const fieldset = document.createElement("fieldset")
+
+
+   
     _form.appendChild(fieldset)
 
 
@@ -320,6 +405,13 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
     const form_panel = document.createElement("div")
     form_panel.classList = ['form_panel_h12nbsx9dk23m32ui4948382']
+
+    if (navigator){
+        // _form.style.display = 'flex'
+        form_panel.appendChild(navigator)
+        // fieldset.style.flex = '1'
+    }
+
     form_panel.appendChild(_form)
     form_panel.appendChild(_formRight)
 
