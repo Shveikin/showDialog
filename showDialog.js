@@ -2,7 +2,6 @@
 
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
-
 function showDialog({ title, message, buttons, data, style, methods, form_request, nav}) {
     function createElement(tag, params = false){
 		const element = document.createElement(tag)
@@ -19,7 +18,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
                 element.id = xid
 
                 hoverstyle = `#${xid}:hover {${hoverstyle}}`
-                console.log('hh>>', hoverstyle);
+                // console.log('hh>>', hoverstyle);
 
                 const styleElement = document.createElement('style')
                 if (styleElement.styleSheet) {
@@ -28,6 +27,10 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
                     styleElement.appendChild(document.createTextNode(hoverstyle));
                 }
                 document.getElementsByTagName('head')[0].appendChild(styleElement)
+            } else if (i=='child') {
+                params[i].map(child => {
+                    element.appendChild(child)
+                })
             } else element[i] = params[i];
         } 
 		return element;
@@ -92,8 +95,10 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
     const main_data = data;
     function serializator(_frm) {
         let array = Array.from(new FormData(_frm));
+        console.log('array', array);
         let result = {};
         for (let i in array) {
+
 
             let name = array[i][0];
             let value = array[i][1];
@@ -257,6 +262,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
     }
 
     var _bind = {
+        createElement,
         button: {
 
         },
@@ -489,5 +495,6 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
     if (title in hahc_xauto_scrollx42ex)
         _modelDi.scrollTop = hahc_xauto_scrollx42ex[title]
+
 
 }
