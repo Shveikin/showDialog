@@ -2,6 +2,132 @@
 
 let old_wx0183 = null;
 const hahc_xauto_scrollx42ex = {}
+const widgetListx42ex = {}
+const lh__8ijmd21nn23 = {}
+
+function widget(element, params = false){
+    if (!(element instanceof HTMLElement)){
+        switch (element.substr(0,1)) {
+            case '#': return widgetListx42ex[element.substr(1)].element
+            case '$': return widgetListx42ex[element.substr(1)].params
+            case '@':
+                element = widgetListx42ex[element.substr(1)].element
+            break;
+            default:
+                element = document.createElement(element)
+            break;
+        }
+    }
+
+    // addEventListener("click", displayDate)
+        
+    
+    
+    if (params) 
+    for (let i of Object.keys(params)) { 
+
+
+        switch (i) {
+            case 'style':
+                for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
+            break;
+            case 'hover':
+                let hoverstyle = '';
+                for (let j of Object.keys(params[i])) {
+                    hoverstyle += `${j}: ${params[i][j]};`
+                }
+                const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
+                element.id = xid
+
+                hoverstyle = `#${xid}:hover {${hoverstyle}}`
+
+                const styleElement = document.createElement('style')
+                if (styleElement.styleSheet) {
+                    styleElement.styleSheet.cssText = hoverstyle;
+                } else {
+                    styleElement.appendChild(document.createTextNode(hoverstyle));
+                }
+                document.getElementsByTagName('head')[0].appendChild(styleElement)
+            break;
+            case 'child':
+                params[i].map(child => {
+                    element.appendChild(child)
+                })
+            break;
+            case 'name':
+                _params = params!=false ? params :{}
+
+                _params['on'] = function(event, func){
+                    // if (!(params[i] in lh__8ijmd21nn23)) 
+                    // if (params[i] in lh__8ijmd21nn23 && lh__8ijmd21nn23[params[i]].indexOf('event') == -1){
+                        const func2 = func.bind(element)
+                        element.addEventListener(event, func2);
+                        
+                        if (!(params[i] in  lh__8ijmd21nn23)) lh__8ijmd21nn23[params[i]] = []
+                            lh__8ijmd21nn23[params[i]].push(event) 
+
+                        return {
+                            object: element,
+                            listener: params[i],
+                            on: event,
+                            result: func
+                        }
+                    // } else {
+                    //     console.error('Не могу добавить прослушку', event);
+                    // }
+                }
+
+                widgetListx42ex[params[i]] = {element, params:_params}
+            default:
+                if (typeof params[i] == 'object' && 'listener' in params[i]){
+                    const listener = params[i]
+                    const func2 = listener.result.bind(listener.object)
+                    const func3 = () => {
+                        element[i] = func2()
+                    }
+                    listener.object.addEventListener(listener.on, func3);
+                    func3()
+                } else {
+                    element[i] = params[i];
+                }
+            break;
+        }
+
+
+
+        // console.log(params[i])
+        // if (i=='style') {
+        //     for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
+        // } else if (i=='hover') {
+        //     let hoverstyle = '';
+        //     for (let j of Object.keys(params[i])) {
+        //         hoverstyle += `${j}: ${params[i][j]};`
+        //     }
+        //     const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
+        //     element.id = xid
+
+        //     hoverstyle = `#${xid}:hover {${hoverstyle}}`
+
+        //     const styleElement = document.createElement('style')
+        //     if (styleElement.styleSheet) {
+        //         styleElement.styleSheet.cssText = hoverstyle;
+        //     } else {
+        //         styleElement.appendChild(document.createTextNode(hoverstyle));
+        //     }
+        //     document.getElementsByTagName('head')[0].appendChild(styleElement)
+        // } else if (i=='child') {
+        //     params[i].map(child => {
+        //         element.appendChild(child)
+        //     })
+        // } else if (i=='name') {
+        //     params[i].map(child => {
+        //         element.appendChild(child)
+        //     })
+        // } else element[i] = params[i];
+    } 
+    return element;
+}
+
 function showDialog({ title, message, buttons, data, style, methods, form_request, nav}) {
     function createElement(tag, params = false){
 		const element = document.createElement(tag)
@@ -35,6 +161,8 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
         } 
 		return element;
 	}
+
+
 
     let navPath = ''
     let navigator = null
@@ -263,6 +391,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
     var _bind = {
         createElement,
+        widget,
         button: {
 
         },
@@ -291,7 +420,10 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
 
             return descript;
         },
-        methods
+        methods,
+        reRender: (data) => {
+            messageToFieldset(fieldset, message, data)
+        }
     }
 
 
