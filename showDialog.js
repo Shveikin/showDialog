@@ -6,6 +6,7 @@ const widgetListx42ex = {}
 const lh__8ijmd21nn23 = {}
 
 function widget(element, params = false){
+    // console.log(element, params)
     if (!(element instanceof HTMLElement)){
         switch (element.substr(0,1)) {
             case '#': return widgetListx42ex[element.substr(1)].element
@@ -18,15 +19,23 @@ function widget(element, params = false){
             break;
         }
     }
-
-    // addEventListener("click", displayDate)
-        
+    
+    function widgetlisner(elm, cell ,listener){
+        const func2 = listener.result.bind(listener.object)
+        const func3 = () => {
+            // Создать сток для изминений при обновление
+            widget(elm, {[cell]: func2()})
+        }
+        listener.object.addEventListener(listener.on, func3);
+        func3()
+    }
     
     
     if (params) 
     for (let i of Object.keys(params)) { 
-
-
+        if (typeof params[i] == 'object' && 'listener' in params[i])
+            widgetlisner(element, i, params[i])
+        else
         switch (i) {
             case 'style':
                 for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
@@ -79,17 +88,17 @@ function widget(element, params = false){
 
                 widgetListx42ex[params[i]] = {element, params:_params}
             default:
-                if (typeof params[i] == 'object' && 'listener' in params[i]){
-                    const listener = params[i]
-                    const func2 = listener.result.bind(listener.object)
-                    const func3 = () => {
-                        element[i] = func2()
-                    }
-                    listener.object.addEventListener(listener.on, func3);
-                    func3()
-                } else {
-                    element[i] = params[i];
-                }
+                // if (typeof params[i] == 'object' && 'listener' in params[i]){
+                //     const listener = params[i]
+                //     const func2 = listener.result.bind(listener.object)
+                //     const func3 = () => {
+                //         element[i] = func2()
+                //     }
+                //     listener.object.addEventListener(listener.on, func3);
+                //     func3()
+                // } else {
+                element[i] = params[i];
+                // }
             break;
         }
 
