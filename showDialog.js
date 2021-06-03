@@ -33,6 +33,10 @@ function widget(element, params = false){
     
     if (params) 
     for (let i of Object.keys(params)) { 
+        if (typeof params[i]=='function' && i.substr(0,2)!='on'){
+            // console.log('params', params)
+            params[i]([element, i])
+        } else 
         if (typeof params[i] == 'object' && 'listener' in params[i])
             widgetlisner(element, i, params[i])
         else
@@ -59,9 +63,34 @@ function widget(element, params = false){
                 document.getElementsByTagName('head')[0].appendChild(styleElement)
             break;
             case 'child':
-                params[i].map(child => {
-                    element.appendChild(child)
+                // console.log(element, params[i]);
+                // let last_child = 0;
+                // let all_childs = element.childNodes.length
+
+                while (element.firstChild)
+                    element.removeChild(element.firstChild);
+
+
+                params[i].map((child, key) => {
+                    // last_child = key
+                    // if (element.childNodes[key]){
+                    //     if (element.childNodes[key].innerText != child.innerText){
+                    //         element.removeChild(element.childNodes[key]);
+                    //         if (element.childNodes.length!=0)
+                    //             element.insertAfter(element.childNodes[key-1], child)
+                    //         else
+                    //             element.appendChild(child)
+                    //     }
+                    // } else {
+                        element.appendChild(child)
+                    // }
                 })
+
+                // if (last_child<all_childs){
+                //     for (let index = last_child+1; index < all_childs; index++) {
+                //         element.removeChild(element.childNodes[index]);
+                //     }
+                // }
             break;
             case 'name':
                 _params = params!=false ? params :{}
@@ -83,7 +112,7 @@ function widget(element, params = false){
 
                 widgetListx42ex[params[i]] = {element, params:_params}
             default:
-                element[i] = params[i];
+                    element[i] = params[i]
             break;
         }
 
@@ -91,39 +120,84 @@ function widget(element, params = false){
     return element;
 }
 
-function showDialog({ title, message, buttons, data, style, methods, form_request, nav}) {
-    return new Promise(function(resolve, reject) {
-        function createElement(tag, params = false){
-            const element = document.createElement(tag)
-            if (params) 
-            for (let i of Object.keys(params)) { 
-                if (i=='style') for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
-                else if (i=='hover') {
-                    console.log('hover');
-                    let hoverstyle = '';
-                    for (let j of Object.keys(params[i])) {
-                        hoverstyle += `${j}: ${params[i][j]};`
-                    }
-                    const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
-                    element.id = xid
 
-                    hoverstyle = `#${xid}:hover {${hoverstyle}}`
-                    // console.log('hh>>', hoverstyle);
+class WidgetState{
+    constructor(data){
+        this.props = data
+        this.updates = {}
+        Object.keys(data).map((itm) => {
+            Object.defineProperty(this, itm, {
+                get:function () {
+                    return data[itm]
+                    // return (callBack = false, returnState = false) => {
+                    // 	if (returnState){
+                    // 		return (updateme) => {
+                    // 			widget(updateme[0], {[updateme[1]]: callBack?callBack(data[itm]):data[itm]})
 
-                    const styleElement = document.createElement('style')
-                    if (styleElement.styleSheet) {
-                        styleElement.styleSheet.cssText = hoverstyle;
-                    } else {
-                        styleElement.appendChild(document.createTextNode(hoverstyle));
-                    }
-                    document.getElementsByTagName('head')[0].appendChild(styleElement)
-                } else if (i=='child') {
-                    params[i].map(child => {
-                        element.appendChild(child)
+                    // 			if (!(itm in this.updates)) this.updates[itm] = []
+                    // 			this.updates[itm].push({element: updateme, callBack})
+                    // 		}
+                    // 	} else {
+                    // 		if (callBack && typeof callBack == 'function'){
+                    // 			return callBack(data[itm])
+                    // 		} else {
+                                
+                    // 		}
+                    // 	}
+                    // }
+                },
+                set:function (val){
+                    data[itm] = val
+                    if (itm in this.updates)
+                    this.updates[itm].map(updateme => {
+                        widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
                     })
-                } else element[i] = params[i];
-            } 
-            return element;
+                }
+            });
+        })
+    }
+
+
+    state(callBack){
+        let _vars = '';
+        try {
+            [,_vars] = /{(.{0,}?)}/g.exec(callBack.toString())
+            _vars = _vars.split(',').map(i => i.trim())
+        } catch(e){
+            console.error(callBack.toString() + ' - не указаны в фигурных скобках аргументы');
+            _vars = Object.keys(this.props)
+        }
+
+
+        const getProps = (arr) => {
+            let prps = {}
+            arr.map(itm => {
+                prps[itm] = this.props[itm]
+            })
+            return prps
+        }
+
+        return (updateme) => {
+            widget(updateme[0], {[updateme[1]]: callBack(getProps(_vars))})
+
+            _vars.map(itm => {
+                if (!(itm in this.updates)) this.updates[itm] = []
+                this.updates[itm].push({element: updateme, callBack:() => callBack(getProps(_vars))})
+            })
+        }
+    }
+}
+
+
+function showDialog({ title, message, buttons, data, state = false, style, methods, form_request, nav}) {
+    return new Promise(function(resolve, reject) {
+        
+        if (state){
+            if (typeof state == 'function')
+                data = state(data)
+            else
+                data = state
+            state = true
         }
 
 
@@ -356,7 +430,7 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
         var _bind = {
             resolve,
             reject,
-            createElement,
+            createElement: widget,
             widget,
             button: {
 
@@ -365,9 +439,9 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
             close: () => {
                 remove_black()
             },
-            reopen: () => {
-                remove_black()
-                showDialog({ title, message, buttons, main_data, style, methods, form_request });
+            reopen(nn_data){
+                remove_black();
+                showDialog({ title, message, buttons, data: nn_data, style, methods, form_request });
             },
             form: () => {
                 const formData = Object.assign(data, serializator(_form));
@@ -461,6 +535,11 @@ function showDialog({ title, message, buttons, data, style, methods, form_reques
                 // console.log(message, 'data function', data);
                 _bind['functionData'] = data;
                 messageToFieldset(to, message, data())
+                return false;
+            } else if (state != false && data?.constructor?.name!="WidgetState"){
+                data = new WidgetState(data)
+                _bind['data'] = data;
+                messageToFieldset(to, message, data)
                 return false;
             }
 
