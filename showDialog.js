@@ -70,21 +70,23 @@ function widget(element, params = false){
                 while (element.firstChild)
                     element.removeChild(element.firstChild);
 
-
-                params[i].map((child, key) => {
-                    // last_child = key
-                    // if (element.childNodes[key]){
-                    //     if (element.childNodes[key].innerText != child.innerText){
-                    //         element.removeChild(element.childNodes[key]);
-                    //         if (element.childNodes.length!=0)
-                    //             element.insertAfter(element.childNodes[key-1], child)
-                    //         else
-                    //             element.appendChild(child)
-                    //     }
-                    // } else {
-                        element.appendChild(child)
-                    // }
-                })
+                if (Array.isArray(params[i]))
+                    params[i].map((child, key) => {
+                        // last_child = key
+                        // if (element.childNodes[key]){
+                        //     if (element.childNodes[key].innerText != child.innerText){
+                        //         element.removeChild(element.childNodes[key]);
+                        //         if (element.childNodes.length!=0)
+                        //             element.insertAfter(element.childNodes[key-1], child)
+                        //         else
+                        //             element.appendChild(child)
+                        //     }
+                        // } else {
+                            element.appendChild(child)
+                        // }
+                    })
+                else 
+                    element.appendChild(params[i])
 
                 // if (last_child<all_childs){
                 //     for (let index = last_child+1; index < all_childs; index++) {
@@ -126,37 +128,25 @@ class WidgetState{
         this.props = data
         this.updates = {}
         Object.keys(data).map((itm) => {
-            Object.defineProperty(this, itm, {
-                get:function () {
-                    return data[itm]
-                    // return (callBack = false, returnState = false) => {
-                    // 	if (returnState){
-                    // 		return (updateme) => {
-                    // 			widget(updateme[0], {[updateme[1]]: callBack?callBack(data[itm]):data[itm]})
-
-                    // 			if (!(itm in this.updates)) this.updates[itm] = []
-                    // 			this.updates[itm].push({element: updateme, callBack})
-                    // 		}
-                    // 	} else {
-                    // 		if (callBack && typeof callBack == 'function'){
-                    // 			return callBack(data[itm])
-                    // 		} else {
-                                
-                    // 		}
-                    // 	}
-                    // }
-                },
-                set:function (val){
-                    data[itm] = val
-                    if (itm in this.updates)
-                    this.updates[itm].map(updateme => {
-                        widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
-                    })
-                }
-            });
+            const f = typeof data[itm] == 'object';
+            if (f){
+                this[itm] = new WidgetState(data[itm])
+            } else {
+                Object.defineProperty(this, itm, {
+                    get:function () {
+                        return f?this[itm]:data[itm]
+                    },
+                    set:function (val){
+                        data[itm] = val
+                        if (itm in this.updates)
+                        this.updates[itm].map(updateme => {
+                            widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
+                        })
+                    }
+                });
+            }
         })
     }
-
 
     state(callBack){
         let _vars = '';
@@ -168,23 +158,25 @@ class WidgetState{
             _vars = Object.keys(this.props)
         }
 
-
         const getProps = (arr) => {
             let prps = {}
             arr.map(itm => {
-                prps[itm] = this.props[itm]
+                prps[itm] = this[itm]
             })
             return prps
         }
 
         return (updateme) => {
             widget(updateme[0], {[updateme[1]]: callBack(getProps(_vars))})
-
             _vars.map(itm => {
                 if (!(itm in this.updates)) this.updates[itm] = []
                 this.updates[itm].push({element: updateme, callBack:() => callBack(getProps(_vars))})
             })
         }
+    }
+
+    static import(elements){
+        console.log('import', elements);
     }
 }
 
@@ -231,7 +223,7 @@ function showDialog({ title, message, buttons, data, state = false, style, metho
 
 
                 for(const i of Object.keys(elements)){
-                    console.log('>>>', i);
+                    // console.log('>>>', i);
                     const li = createElement('ul', {
                         innerHTML: i,
                         style: {
@@ -253,7 +245,7 @@ function showDialog({ title, message, buttons, data, state = false, style, metho
             navigator.appendChild(renderMenu(nav))
         }
 
-        console.log(navigator)
+        // console.log(navigator)
 
 
         const main_buttons = buttons;
@@ -451,7 +443,7 @@ function showDialog({ title, message, buttons, data, state = false, style, metho
                     Object.defineProperty(descript, i, {
                         get: () => Object.assign(data, serializator(_form))[i],
                         set: (x) => {
-                            console.log(main_data)
+                            // console.log(main_data)
 
                             messageToFieldset(fieldset, main_message, Object.assign(Object.assign(main_data, serializator(_form)), { [i]: x }))
                         }
