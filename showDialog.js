@@ -29,6 +29,7 @@ function widget(element, params = false){
         listener.object.addEventListener(listener.on, func3);
         func3()
     }
+
     
     
     if (params) 
@@ -42,26 +43,39 @@ function widget(element, params = false){
         else
         switch (i) {
             case 'style':
-                for (let j of Object.keys(params[i])) element.style[j] = params[i][j]
-            break;
-            case 'hover':
-                let hoverstyle = '';
                 for (let j of Object.keys(params[i])) {
-                    hoverstyle += `${j}: ${params[i][j]};`
+                    if (Array.isArray(params[i][j])){
+                        element.style[j] = params[i][j][0]
+                        setTimeout(() => 
+                            element.style[j] = params[i][j][1]
+                        , 10)
+                    } else {
+                        if (typeof params[i][j] == 'function'){
+                            params[i][j]([element, i, j])
+                        } else {
+                            element.style[j] = params[i][j]
+                        }
+                    }
                 }
-                const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
-                element.id = xid
-
-                hoverstyle = `#${xid}:hover {${hoverstyle}}`
-
-                const styleElement = document.createElement('style')
-                if (styleElement.styleSheet) {
-                    styleElement.styleSheet.cssText = hoverstyle;
-                } else {
-                    styleElement.appendChild(document.createTextNode(hoverstyle));
-                }
-                document.getElementsByTagName('head')[0].appendChild(styleElement)
             break;
+            // case 'hover':
+            //     let hoverstyle = '';
+            //     for (let j of Object.keys(params[i])) {
+            //         hoverstyle += `${j}: ${params[i][j]};`
+            //     }
+            //     const xid = 'id' in params?params['id']:`d${Math.random()}`.replace('.','f__')
+            //     element.id = xid
+
+            //     hoverstyle = `#${xid}:hover {${hoverstyle}}`
+
+            //     const styleElement = document.createElement('style')
+            //     if (styleElement.styleSheet) {
+            //         styleElement.styleSheet.cssText = hoverstyle;
+            //     } else {
+            //         styleElement.appendChild(document.createTextNode(hoverstyle));
+            //     }
+            //     document.getElementsByTagName('head')[0].appendChild(styleElement)
+            // break;
             case 'child':
                 // console.log(element, params[i]);
                 // let last_child = 0;
@@ -123,6 +137,23 @@ function widget(element, params = false){
 }
 
 
+const __widget__store__ = {}
+function wigetComponent(component_name, component_props = {}){
+    return __widget__store__[component_name](component_props)
+}
+
+function widgetRegister(name, _widget = () => {}){
+    if (name in __widget__store__){
+        throw 'Компонент ' + name + ' - уже зарегистрирован!';
+        console.error('Компонент ',name, ' - уже зарегистрирован!');
+        return false;
+    }
+    __widget__store__[name] = (prps) => {
+        return _widget(prps)
+    }
+    return true;
+}
+
 class WidgetState{
     constructor(data){
         this.props = data
@@ -140,12 +171,28 @@ class WidgetState{
                         data[itm] = val
                         if (itm in this.updates)
                         this.updates[itm].map(updateme => {
-                            widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
+                            // widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
+                            
+                            widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(data[itm]) : data[itm]  ));
                         })
                     }
                 });
             }
         })
+    }
+
+    static __update = (updateme, callBack) => {
+        const updateme2 = updateme.slice(0);
+        updateme2.shift()
+        const params = {}
+        let lift = params;
+        while (updateme2.length > 1) {
+            const ccv = updateme2.shift();
+            lift[ccv] = {};
+            lift = lift[ccv]
+        }
+        lift[updateme2.shift()] = callBack
+        return params
     }
 
     state(callBack){
@@ -166,12 +213,23 @@ class WidgetState{
             return prps
         }
 
+        
+
         return (updateme) => {
-            widget(updateme[0], {[updateme[1]]: callBack(getProps(_vars))})
+            // console.log(updateme)
+            // widget(updateme[0], {[updateme[1]]: callBack(getProps(_vars))})
+            // console.log(WidgetState.__update(updateme, callBack(getProps(_vars))));
+            widget(updateme[0], WidgetState.__update(updateme, callBack(getProps(_vars))));
+            
+            
+            // WidgetState.__update({ element: updateme, callBack: () => { console.log(_vars, getProps(_vars)); callBack(getProps(_vars)) } })
+            
             _vars.map(itm => {
                 if (!(itm in this.updates)) this.updates[itm] = []
                 this.updates[itm].push({element: updateme, callBack:() => callBack(getProps(_vars))})
             })
+            
+            
         }
     }
 
