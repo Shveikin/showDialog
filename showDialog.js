@@ -5,7 +5,18 @@ const hahc_xauto_scrollx42ex = {}
 const widgetListx42ex = {}
 const lh__8ijmd21nn23 = {}
 
-function widget(element, params = false){
+
+
+const __widget__store__ = {}
+function widget(element, params = false, state = false){
+    if (typeof params == 'function')
+        params = params(state != false ? new WidgetState(state): state)
+
+    if (element in __widget__store__)
+        return __widget__store__[element](params)
+
+
+
     // console.log(element, params)
     if (!(element instanceof HTMLElement)){
         switch (element.substr(0,1)) {
@@ -137,10 +148,9 @@ function widget(element, params = false){
 }
 
 
-const __widget__store__ = {}
-function wigetComponent(component_name, component_props = {}){
-    return __widget__store__[component_name](component_props)
-}
+// function wigetComponent(component_name, component_props = {}){
+//     return __widget__store__[component_name](component_props)
+// }
 
 function widgetRegister(name, _widget = () => {}){
     if (name in __widget__store__){
@@ -201,7 +211,7 @@ class WidgetState{
             [,_vars] = /{(.{0,}?)}/g.exec(callBack.toString())
             _vars = _vars.split(',').map(i => i.trim())
         } catch(e){
-            console.error(callBack.toString() + ' - не указаны в фигурных скобках аргументы');
+            // console.error(callBack.toString() + ' - не указаны в фигурных скобках аргументы');
             _vars = Object.keys(this.props)
         }
 
