@@ -88,37 +88,17 @@ function widget(element, params = false, state = false){
             //     document.getElementsByTagName('head')[0].appendChild(styleElement)
             // break;
             case 'child':
-                // console.log(element, params[i]);
-                // let last_child = 0;
-                // let all_childs = element.childNodes.length
-
                 while (element.firstChild)
                     element.removeChild(element.firstChild);
 
                 if (Array.isArray(params[i]))
-                    params[i].map((child, key) => {
-                        // last_child = key
-                        // if (element.childNodes[key]){
-                        //     if (element.childNodes[key].innerText != child.innerText){
-                        //         element.removeChild(element.childNodes[key]);
-                        //         if (element.childNodes.length!=0)
-                        //             element.insertAfter(element.childNodes[key-1], child)
-                        //         else
-                        //             element.appendChild(child)
-                        //     }
-                        // } else {
+                    params[i].map((child) => {
                             if (child)
-                            element.appendChild(child)
-                        // }
+                                element.appendChild(child)
                     })
                 else 
-                    element.appendChild(params[i])
-
-                // if (last_child<all_childs){
-                //     for (let index = last_child+1; index < all_childs; index++) {
-                //         element.removeChild(element.childNodes[index]);
-                //     }
-                // }
+                    if (params[i])
+                        element.appendChild(params[i])
             break;
             case 'name':
                 _params = params!=false ? params :{}
