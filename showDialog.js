@@ -107,6 +107,7 @@ function widget(element, params = false, state = false){
                         //             element.appendChild(child)
                         //     }
                         // } else {
+                            if (child)
                             element.appendChild(child)
                         // }
                     })
