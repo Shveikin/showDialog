@@ -146,31 +146,102 @@ function widgetRegister(name, _widget = () => {}){
 }
 
 class WidgetState{
-    constructor(data){
+    constructor(data, root = false, parent = false){
         this.props = data
         this.updates = {}
+
+        if (parent)
+            this.__parent = () => parent
+
+        if (root)
+            this.__root = root
+        else
+            this.__root = this
+
         Object.keys(data).map((itm) => {
             const f = typeof data[itm] == 'object';
             if (f){
-                this[itm] = new WidgetState(data[itm])
+                this[itm] = new WidgetState(data[itm], root, {
+                    parent: this,
+                    cell: itm
+                })
             } else {
-                Object.defineProperty(this, itm, {
-                    get:function () {
-                        return f?this[itm]:data[itm]
-                    },
-                    set:function (val){
-                        data[itm] = val
-                        if (itm in this.updates)
-                        this.updates[itm].map(updateme => {
-                            // widget(updateme.element[0], {[updateme.element[1]]: typeof updateme.callBack == 'function'?updateme.callBack(data[itm]):data[itm]})
-                            
-                            widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(data[itm]) : data[itm]  ));
-                        })
-                    }
-                });
+                this.push({[itm]: data[itm]})
             }
         })
     }
+
+    push(array_or_object){
+        const inserted = []
+        Object.keys(array_or_object).map(index => {
+            const element = array_or_object[index];
+            const key = Array.isArray(array_or_object)?(Array.isArray(this.props)?this.props.length:Math.floor(Math.random()*10000)):index
+
+            this.props[key] = element
+
+            const data = {[key]: element}
+            Object.keys(data).map((itm) => {
+                const f = typeof data[itm] == 'object';
+                if (f){
+                    this[itm] = new WidgetState(data[itm])
+                } else {
+                    if (!(itm in this))
+                    Object.defineProperty(this, itm, {
+                        get:function () {
+                            return f?this[itm]:data[itm]
+                        },
+                        set:function (val){
+                            data[itm] = val
+                            if (itm in this.updates)
+                            this.updates[itm].map(updateme => {
+                                widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(data[itm]) : data[itm]  ));
+                            })
+                        }
+                    });
+                    else
+                    throw(`[WidgetState].push()  ${itm} - уже определен!`)
+                }
+            })
+
+            inserted.push(key)
+        })
+
+        this._update__self()
+
+        return inserted
+    }
+
+
+    remove(key){
+        delete this.props[key]
+        this[key] = undefined
+        this._update__self()
+    }
+
+
+    _update__self(){
+        if ('__self' in this.updates){
+            this.updates['__self'].map(updateme => {
+                widget(updateme.element[0], 
+                    WidgetState.__update(
+                        updateme.element, 
+                        typeof updateme.callBack == 'function' ? updateme.callBack(this.props) : this.props  
+                    ));
+            })
+        }
+
+        if ('__parent' in this){
+            const prnt = this.__parent();
+            if ('updates' in prnt.parent){
+                if (prnt.cell in prnt.parent.updates){
+                    prnt.parent.updates[prnt.cell].map(updateme => {
+                        widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(this.props) : this.props  ));
+                    })
+                }
+            }
+        }
+    }
+
 
     static __update = (updateme, callBack) => {
         const updateme2 = updateme.slice(0);
@@ -187,6 +258,7 @@ class WidgetState{
     }
 
     state(callBack){
+        let __self = false;
         let _vars = '';
         try {
             [,_vars] = /{(.{0,}?)}/g.exec(callBack.toString())
@@ -194,6 +266,7 @@ class WidgetState{
         } catch(e){
             // console.error(callBack.toString() + ' - не указаны в фигурных скобках аргументы');
             _vars = Object.keys(this.props)
+            __self = true;
         }
 
         const getProps = (arr) => {
@@ -207,22 +280,22 @@ class WidgetState{
         
 
         return (updateme) => {
-            // console.log(updateme)
-            // widget(updateme[0], {[updateme[1]]: callBack(getProps(_vars))})
-            // console.log(WidgetState.__update(updateme, callBack(getProps(_vars))));
             widget(updateme[0], WidgetState.__update(updateme, callBack(getProps(_vars))));
-            
-            
-            // WidgetState.__update({ element: updateme, callBack: () => { console.log(_vars, getProps(_vars)); callBack(getProps(_vars)) } })
-            
-            _vars.map(itm => {
-                if (!(itm in this.updates)) this.updates[itm] = []
-                this.updates[itm].push({element: updateme, callBack:() => callBack(getProps(_vars))})
-            })
+
+
+            if (__self){
+                if (!('__self' in this.updates)) this.updates['__self'] = []
+                this.updates['__self'].push({element: updateme, callBack:() => callBack(getProps(Object.keys(this.props)))})
+            } else 
+                _vars.map(itm => {
+                    if (!(itm in this.updates)) this.updates[itm] = []
+                    this.updates[itm].push({element: updateme, callBack:() => callBack(getProps(_vars))})
+                })
             
             
         }
     }
+
 
     static import(elements){
         console.log('import', elements);
