@@ -17,7 +17,6 @@ function widget(element, params = false, state = false){
 
 
 
-	// console.log(element, params)
 	if (!(element instanceof HTMLElement)){
 		switch (element.substr(0,1)) {
 			case '#': return widgetListx42ex[element.substr(1)].element
@@ -150,19 +149,14 @@ class WidgetState{
 		this.props = data
 		this.updates = {}
 
-		if (parent)
-			this.__parent = parent
-
-		if (root)
-			this.__root = root
-		else
-			this.__root = this
+		this.parent = parent
+		this.root = root?root:this
 
 		Object.keys(data).map((itm) => {
 			const f = typeof data[itm] == 'object';
 			if (f){
-				this[itm] = new WidgetState(data[itm], root, {
-					parent: this,
+				this[itm] = new WidgetState(data[itm], this.root, {
+					widget: this,
 					inCell: itm
 				})
 			} else {
@@ -170,6 +164,8 @@ class WidgetState{
 			}
 		})
 	}
+
+
 
 	push(array_or_object){
 		const inserted = []
@@ -193,67 +189,70 @@ class WidgetState{
 						set:function (val){
 							data[itm] = val
 							this.props[itm] = val
-							if (itm in this.updates)
-							this.updates[itm].map(updateme => {
-								WidgetState.widget_update(this, updateme)
-								// widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(data[itm]) : data[itm]  ));
-							})
+							this.updateOnly(itm);
 						}
 					});
-					else
-					throw(`[WidgetState].push()  ${itm} - уже определен!`)
+					else throw(`[WidgetState].push()  ${itm} - уже определен!`)
 				}
 			})
 
 			inserted.push(key)
 		})
 
-		this._update__self()
+		this.updateOnly('__self');
 
 		return inserted
 	}
 
+	myPath(){
+		let result = '';
+		let element = this;
+		while (element.parent){
+			result = element.parent.inCell + '/' + result;
+			element = element.parent.widget;
+		}
+		result = `root/${result}`;
+		return result
+	}
+
+	updateOnly(key = false){
+		let log = this.myPath() + `[${key}]`;
+		let updateParent = false;
+
+		if (key in this.updates){
+			log += `( ${key} +)`;
+			this.updates[key].map(updateme => {
+				WidgetState.widget_update(this, updateme)
+			})
+			if (this.parent) {
+				this.parent.widget.updateOnly(this.parent.inCell)
+				updateParent = true;
+			}
+		}
+
+		if (key!='__self'){
+			log += `( ${key} +   == key!='__self')`;
+			this.updateOnly('__self')
+		}
+
+		if (this.parent && updateParent == false) {
+			log += `( only parent )`;
+			this.parent.widget.updateOnly(this.parent.inCell)
+			updateParent = true;
+		}
+	}
 
 	remove(key){
 		delete this.props[key]
 		this[key] = undefined
-		this._update__self()
+		this.updateOnly('__self');
 	}
-
-
-	_update__self(){
-		if ('__self' in this.updates){
-			this.updates['__self'].map(updateme => {
-				WidgetState.widget_update(this, updateme)
-				// widget(updateme.element[0], 
-				// 	WidgetState.__update(
-				// 		updateme.element, 
-				// 		typeof updateme.callBack == 'function' ? updateme.callBack(this.props) : this.props  
-				// 	));
-			})
-		}
-
-		// if ('__parent' in this){
-		// 	const prnt = this.__parent();
-		// 	if ('updates' in prnt.parent){
-		// 		if (prnt.cell in prnt.parent.updates){
-		// 			prnt.parent.updates[prnt.cell].map(updateme => {
-		// 				widget_update(this, updateme)
-		// 				// widget(updateme.element[0], WidgetState.__update(updateme.element, typeof updateme.callBack == 'function' ? updateme.callBack(this.props) : this.props  ));
-		// 			})
-		// 		}
-		// 	}
-		// }
-	}
-
 
 	static widget_update(_self, updateme, callBack = false){
 		if (_self.__parent){
-			console.log('__parent', _self.__parent);
-			console.log('updateme', updateme);
+			// console.log('__parent', _self.__parent);
+			// console.log('updateme', updateme);
 		}
-
-		
 
 		widget(updateme.element[0], 
 			WidgetState.__update(updateme.element, 
