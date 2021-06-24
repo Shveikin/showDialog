@@ -93,11 +93,19 @@ function widget(element, params = false, state = false){
 				if (Array.isArray(params[i]))
 					params[i].map((child) => {
 							if (child)
-								element.appendChild(child)
+								if (child instanceof HTMLElement)
+									element.appendChild(child)
+								else
+									element.innerHTML += child
 					})
 				else 
 					if (params[i])
-						element.appendChild(params[i])
+						if (params[i] instanceof HTMLElement)
+							element.appendChild(params[i])
+						else
+							element.innerHTML += params[i]
+
+						// element.appendChild(params[i])
 			break;
 			case 'name':
 				_params = params!=false ? params :{}
