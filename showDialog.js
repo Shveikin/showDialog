@@ -48,9 +48,9 @@ function widget(element, params = false, state = false){
 			// console.log('params', params)
 			params[i]([element, i])
 		} else 
-		if (typeof params[i] == 'object' && 'listener' in params[i])
-			widgetlisner(element, i, params[i])
-		else
+		// if (typeof params[i] == 'object' && 'listener' in params[i])
+		// 	widgetlisner(element, i, params[i])
+		// else
 		switch (i) {
 			case 'style':
 				for (let j of Object.keys(params[i])) {
@@ -161,15 +161,7 @@ class WidgetState{
 		this.root = root?root:this
 
 		Object.keys(data).map((itm) => {
-			const f = typeof data[itm] == 'object';
-			if (f){
-				this[itm] = new WidgetState(data[itm], this.root, {
-					widget: this,
-					inCell: itm
-				})
-			} else {
-				this.push({[itm]: data[itm]})
-			}
+			this.push({[itm]: data[itm]})
 		})
 	}
 
@@ -185,7 +177,7 @@ class WidgetState{
 
 			const data = {[key]: element}
 			Object.keys(data).map((itm) => {
-				const f = typeof data[itm] == 'object';
+				const f = itm.substr(0,1)!='_' && typeof data[itm] == 'object';
 				if (f){
 					this[itm] = new WidgetState(data[itm])
 				} else {
@@ -588,6 +580,9 @@ function showDialog({ title, message, buttons, data, state = false, style, metho
 			reopen(nn_data){
 				remove_black();
 				showDialog({ title, message, buttons, data: nn_data, style, methods, form_request });
+			},
+			serializeForm: () => {
+				return serializator(_form)
 			},
 			form: () => {
 				const formData = Object.assign(data, serializator(_form));
